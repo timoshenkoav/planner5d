@@ -1,15 +1,20 @@
-package com.tunebrains.planner5dtest.ui
+package com.tunebrains.planner5dtest.ui.list
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
+import com.tunebrains.planner5dtest.R
 import com.tunebrains.planner5dtest.data.Project
 import com.tunebrains.planner5dtest.databinding.FragmentProjectsListBinding
+import com.tunebrains.planner5dtest.ui.details.DetailsArgs
+import com.tunebrains.planner5dtest.ui.details.ProjectDetailFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ProjectsListFragment : Fragment() {
@@ -35,8 +40,8 @@ class ProjectsListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val listAdapter = ListDelegationAdapter(
-            projectListItemDelegate {
-                openProjectDetails(it)
+            projectListItemDelegate { item, all ->
+                openProjectDetails(item, all)
             }
         )
         binding?.apply {
@@ -53,7 +58,7 @@ class ProjectsListFragment : Fragment() {
                     }
                     is ProjectsListUiState.ProjectsList -> {
                         listAdapter.items = uiState.items.map {
-                            ProjectListItem(it.name, it)
+                            ProjectListItem(it.name, it, uiState.items)
                         }
                         listAdapter.notifyDataSetChanged()
                     }
@@ -63,7 +68,14 @@ class ProjectsListFragment : Fragment() {
         listVm.load()
     }
 
-    private fun openProjectDetails(project: Project) {
-        TODO("Not yet implemented")
+    private fun openProjectDetails(project: Project, list: List<Project>) {
+        findNavController().navigate(
+            R.id.projectDetailFragment, bundleOf(
+                ProjectDetailFragment.ARG_DATA to DetailsArgs(
+                    project,
+                    list
+                )
+            )
+        )
     }
 }

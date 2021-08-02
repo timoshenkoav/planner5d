@@ -6,6 +6,10 @@
 
     <fragment
         android:id="@+id/projectsListFragment"
-        android:name="com.tunebrains.planner5dtest.ui.ProjectsListFragment"
+        android:name="com.tunebrains.planner5dtest.ui.list.ProjectsListFragment"
         android:label="ProjectsListFragment" />
+    <fragment
+        android:id="@+id/projectDetailFragment"
+        android:name="com.tunebrains.planner5dtest.ui.details.ProjectDetailFragment"
+        android:label="ProjectDetailFragment" />
 </navigation>

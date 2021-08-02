@@ -1,4 +1,4 @@
-package com.tunebrains.planner5dtest.ui
+package com.tunebrains.planner5dtest.ui.list
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
