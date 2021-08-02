@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Planner5dTest</string>
     <string name="projects_list">List</string>
+    <string name="next">Next</string>
+    <string name="up">+</string>
+    <string name="down">-</string>
+    <string name="rotate_left">Rotate Left</string>
+    <string name="rotate_right">Rotate Right</string>
 </resources>

@@ -64,8 +64,9 @@ class FloorRenderCallback : SurfaceHolder.Callback {
         private val atomicBoolean = AtomicBoolean(true)
         private val atomicReference = AtomicReference<RenderData>(null)
 
-        var width = 0
-        var height = 0
+        private var width = 0
+        private var height = 0
+
         fun finish() {
             atomicBoolean.set(false)
         }

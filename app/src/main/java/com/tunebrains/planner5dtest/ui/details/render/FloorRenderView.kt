@@ -49,9 +49,10 @@ class FloorRenderView @JvmOverloads constructor(
             rotateRight.visibility = View.VISIBLE
         }
     }
-    var isScrolling = false
-    var curX:Float=0f
-    var curY:Float=0f
+    private var isScrolling = false
+    private var curX:Float=0f
+    private var curY:Float=0f
+
     override fun onTouchEvent(ev: MotionEvent): Boolean {
         return when (ev.actionMasked) {
             MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {

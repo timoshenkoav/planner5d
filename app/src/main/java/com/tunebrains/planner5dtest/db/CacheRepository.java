@@ -3,7 +3,6 @@ package com.tunebrains.planner5dtest.db;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 
 public class CacheRepository {
     private final CacheDb cacheDb;

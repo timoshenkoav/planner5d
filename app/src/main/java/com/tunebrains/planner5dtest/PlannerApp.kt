@@ -16,6 +16,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
+@SuppressWarnings("unused")
 class PlannerApp : Application() {
     override fun onCreate() {
         super.onCreate()
