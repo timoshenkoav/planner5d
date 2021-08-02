@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.fragment.findNavController
+import com.tunebrains.planner5dtest.R
 import com.tunebrains.planner5dtest.data.Project
 import com.tunebrains.planner5dtest.databinding.FragmentProjectDetailsBinding
 import com.tunebrains.planner5dtest.ui.details.render.RenderData
@@ -17,7 +19,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 data class DetailsArgs(
     val current: Project,
     val list: List<Project>
-):Parcelable
+) : Parcelable
 
 class ProjectDetailFragment : Fragment() {
     companion object {
@@ -39,8 +41,11 @@ class ProjectDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val args: DetailsArgs = requireArguments().getParcelable(ARG_DATA)!!
-
-
+        binding?.toolbar?.title = args.current.name
+        binding?.toolbar?.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
+        binding?.toolbar?.setNavigationIcon(R.drawable.ic_stat_name)
         vm.next().observe(this as LifecycleOwner) { data ->
             when (data) {
                 is ProjectDetailsUiData.ProjectDetailsLoading -> {
@@ -50,11 +55,12 @@ class ProjectDetailFragment : Fragment() {
                     binding?.nextProject?.let {
                         it.setOnClickListener {
                             vm.load(data.data.hash, args.list)
+                            binding?.toolbar?.title = args.current.name
                         }
                         it.visibility = View.VISIBLE
                     }
                 }
-                is ProjectDetailsUiData.ProjectDetailsNone->{
+                is ProjectDetailsUiData.ProjectDetailsNone -> {
                     binding?.nextProject?.visibility = View.GONE
                 }
             }
@@ -62,10 +68,13 @@ class ProjectDetailFragment : Fragment() {
         vm.current().observe(this as LifecycleOwner) { data ->
             when (data) {
                 is ProjectDetailsUiData.ProjectDetailsLoading -> {
-
+                    //display progress
                 }
                 is ProjectDetailsUiData.ProjectDetailsSuccess -> {
 
+                }
+                is ProjectDetailsUiData.ProjectDetailsNone -> {
+                    //display error
                 }
             }
         }

@@ -45,6 +45,7 @@ class ProjectsListFragment : Fragment() {
             }
         )
         binding?.apply {
+            toolbar.setTitle(R.string.projects_list)
             with(recycler) {
                 layoutManager = LinearLayoutManager(requireContext())
                 adapter = listAdapter
