@@ -55,7 +55,6 @@ class ProjectDetailFragment : Fragment() {
                     binding?.nextProject?.let {
                         it.setOnClickListener {
                             vm.load(data.data.hash, args.list)
-                            binding?.toolbar?.title = args.current.name
                         }
                         it.visibility = View.VISIBLE
                     }
@@ -71,7 +70,7 @@ class ProjectDetailFragment : Fragment() {
                     //display progress
                 }
                 is ProjectDetailsUiData.ProjectDetailsSuccess -> {
-
+                    binding?.toolbar?.title = data.data.name
                 }
                 is ProjectDetailsUiData.ProjectDetailsNone -> {
                     //display error

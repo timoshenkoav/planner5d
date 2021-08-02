@@ -64,25 +64,42 @@ class ProjectDetailsViewModel(
         viewModelScope.launch {
             currentProjectData.value = ProjectDetailsUiData.ProjectDetailsLoading
             nextProjectData.value = ProjectDetailsUiData.ProjectDetailsLoading
-            val data = projectsRepository.info(hash)
-            val mappedProject = mapper.map(hash, data)
-            currentProjectData.value = ProjectDetailsUiData.ProjectDetailsSuccess(mappedProject)
+
+            val cur = loadProject(hash)
+            currentProjectData.value = uiEvent(cur)
+
+            renderProject(cur)
+
+            val nextProject = findNext(hash, list)
+            val next = loadProject(nextProject?.hash)
+            nextProjectData.value = uiEvent(next)
+        }
+    }
+
+    private fun uiEvent(mappedProject: ProjectData?): ProjectDetailsUiData {
+        return mappedProject?.let {
+            ProjectDetailsUiData.ProjectDetailsSuccess(it)
+        } ?: ProjectDetailsUiData.ProjectDetailsNone
+    }
+
+    private fun renderProject(mappedProject: ProjectData?) {
+        if (mappedProject != null)
             floorData.value =
                 CurrentData(mappedProject.width, mappedProject.height, mappedProject.floors.first())
-            val nextProject = findNext(hash, list)
-            if (nextProject != null) {
-                val nextData = projectsRepository.info(nextProject.hash)
-                nextProjectData.value =
-                    ProjectDetailsUiData.ProjectDetailsSuccess(mapper.map(nextProject.hash, nextData))
-            } else {
-                nextProjectData.value =
-                    ProjectDetailsUiData.ProjectDetailsNone
-            }
+    }
+
+    private suspend fun loadProject(hash: String?): ProjectData? {
+        return if (hash == null) {
+            null
+        } else {
+            val data = projectsRepository.info(hash)
+            val mappedProject = mapper.map(hash, data)
+            mappedProject
         }
     }
 
     private fun findNext(hash: String, list: List<Project>): Project? {
-        val next = list.asReversed().takeWhile { it.hash!=hash }.reversed()
+        val next = list.asReversed().takeWhile { it.hash != hash }.reversed()
         return next.firstOrNull()
     }
 
