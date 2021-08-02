@@ -7,9 +7,10 @@ import java.util.concurrent.atomic.AtomicReference
 
 class FloorRenderCallback : SurfaceHolder.Callback {
     private var drawingThread: DrawingThread? = null
+    private val renderer = FloorRenderer()
     override fun surfaceCreated(holder: SurfaceHolder) {
         drawingThread?.finish()
-        drawingThread = DrawingThread(holder).apply {
+        drawingThread = DrawingThread(holder, renderer).apply {
             start()
         }
     }
@@ -27,43 +28,41 @@ class FloorRenderCallback : SurfaceHolder.Callback {
     }
 
     fun scaleUp() {
-        drawingThread?.scale?.get()?.let {
-            drawingThread?.scale?.set(it + 0.2f)
+        renderer.scale.get()?.let {
+            renderer.scale.set(it + 0.2f)
         }
     }
 
     fun scaleDown() {
-        drawingThread?.scale?.get()?.let {
-            drawingThread?.scale?.set(it - 0.2f)
+        renderer.scale.get()?.let {
+            renderer.scale.set(it - 0.2f)
         }
     }
 
     fun move(diffX: Float, diffY: Float) {
-        drawingThread?.translation?.get()?.let {
-            drawingThread?.translation?.set(PointF(it.x + diffX, it.y + diffY))
+        renderer.translation.get()?.let {
+            renderer.translation.set(PointF(it.x + diffX, it.y + diffY))
         }
     }
 
     fun rotateLeft() {
-        drawingThread?.rotation?.get()?.let {
-            drawingThread?.rotation?.set(it - 45f)
+        renderer.rotation.get()?.let {
+            renderer.rotation.set(it - 45f)
         }
     }
 
     fun rotateRight() {
-        drawingThread?.rotation?.get()?.let {
-            drawingThread?.rotation?.set(it + 45f)
+        renderer.rotation.get()?.let {
+            renderer.rotation.set(it + 45f)
         }
     }
 
     class DrawingThread(
-        private val holder: SurfaceHolder
+        private val holder: SurfaceHolder,
+        private val renderer:FloorRenderer
     ) : Thread() {
         private val atomicBoolean = AtomicBoolean(true)
         private val atomicReference = AtomicReference<RenderData>(null)
-        val scale = AtomicReference(1f)
-        val rotation = AtomicReference(0f)
-        val translation = AtomicReference(PointF(0f, 0f))
 
         var width = 0
         var height = 0
@@ -79,7 +78,7 @@ class FloorRenderCallback : SurfaceHolder.Callback {
                     canvas.drawColor(Color.WHITE)
                     val data = atomicReference.get()
                     if (data != null)
-                        render(canvas, data)
+                        renderer.render(canvas, data)
                 } finally {
                     holder.unlockCanvasAndPost(canvas)
                 }
@@ -87,37 +86,13 @@ class FloorRenderCallback : SurfaceHolder.Callback {
             }
         }
 
-        private val wallPaint = Paint().apply {
-            color = Color.BLACK
-        }
 
-        private fun render(canvas: Canvas, data: RenderData) {
-            translation.get().let {
-                canvas.translate(it.x, it.y)
-            }
-            val scale = scale.get()
-            canvas.rotate(rotation.get())
-            canvas.scale(scale, scale)
-            data.floor.walls.forEach { room ->
-                room.walls.forEach { wallData ->
-                    val start = wallData.points[0]
-                    val end = wallData.points[1]
-                    canvas.drawRect(
-                        RectF(
-                            room.x + start.x,
-                            room.y + start.y,
-                            room.x + end.x + wallData.width,
-                            room.y + end.y + wallData.width
-                        ), wallPaint
-                    )
-                }
-            }
-        }
 
         fun update(data: RenderData) {
-            val scale = width / data.width
-            this.scale.set(scale)
-            this.translation.set(PointF(0f, 0f))
+            val scale = height / data.height
+            this.renderer.scale.set(scale)
+            this.renderer.translation.set(PointF(0f,0f))
+            this.renderer.size.set(PointF(data.width,data.height))
             atomicReference.set(data)
         }
 

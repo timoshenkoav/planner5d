@@ -18,8 +18,8 @@ class ProjectDetailsDataMapper {
                         RoomData(
                             room.x,
                             room.y,
-                            room.walls.filter { it.className == "Wall" && !it.hidden }.map { wall ->
-                                WallData(wall.width, wall.points.map { point ->
+                            room.walls.filter { it.className == "Wall" }.map { wall ->
+                                WallData(wall.width, wall.hidden, wall.points.map { point ->
                                     PointF(point.x, point.y)
                                 })
                             }

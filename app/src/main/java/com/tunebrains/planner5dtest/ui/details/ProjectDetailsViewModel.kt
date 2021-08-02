@@ -11,11 +11,12 @@ import kotlinx.coroutines.launch
 
 data class FloorData(
     val idx: Int,
-    val walls: List<RoomData>
+    val rooms: List<RoomData>
 )
 
 data class WallData(
     val width: Float,
+    val hidden: Boolean,
     val points: List<PointF>
 )
 

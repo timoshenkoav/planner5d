@@ -1,5 +1,6 @@
 package com.tunebrains.planner5dtest.data
 
+import android.util.Log
 import com.google.gson.Gson
 import com.tunebrains.planner5dtest.db.CacheRepository
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +34,7 @@ class ProjectsRepository(
     suspend fun info(hash: String): ProjectInfoResponse {
         return withContext(scope.coroutineContext) {
             val fromCache = cacheRepository.load(hash)
+            Log.d("",fromCache)
             if (fromCache != null) {
                 gson.fromJson(fromCache, ProjectInfoResponse::class.java)
             } else {
